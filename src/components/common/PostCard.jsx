@@ -6,7 +6,7 @@ const PostCard = ({ post }) => {
     <div className="post-card">
       {/* Header */}
       <div className="post-header">
-        <div className="post-avatar">M</div>
+        <div className="post-avatar"></div>
         <div>
           <h4 className="post-author">{post.author}</h4>
           <span className="post-time">{post.time}</span>

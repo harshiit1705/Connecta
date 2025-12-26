@@ -15,8 +15,9 @@
 .post-avatar {
   width: 40px;
   height: 40px;
-  background-color: #1877f2;
-  color: white;
+  background-image: url("/Mark2.jpeg"); 
+  background-size: cover;   
+  background-position: center;
   border-radius: 50%;
   display: flex;
   align-items: center;
