@@ -7,7 +7,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    login({ name: "Neo", id: 1 });
+    login({ name: "Neo", id: "p_89012" });
     navigate("/");
   };
 

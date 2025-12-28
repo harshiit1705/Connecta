@@ -1,17 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./CreatePost.css";
 
 const CreatePost = ({ onCreate }) => {
   const [content, setContent] = useState("");
-
   const handleSubmit = () => {
     if (!content.trim()) return;
 
-    onCreate({
-      author: "Neo",
-      time: "Just now",
-      content
-    });
+    onCreate(content);
     
     setContent("");
   };

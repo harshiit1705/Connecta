@@ -4,38 +4,39 @@ import Sidebar from "../components/common/Sidebar.jsx";
 import CreatePost from "../components/post/CreatePost.jsx";
 import PostFeed from "../components/post/Postfeed.jsx";
 import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
+
+
 
 function Home() {
   const { user } = useContext(AuthContext);
-  const [posts, setPosts] = useState(() => {
-    const savedPosts = localStorage.getItem("posts");
-    return savedPosts
-      ? JSON.parse(savedPosts)
-      : [
-        {
-          id: 1,
-          author: "Mark",
-          time: "1h",
-          content: "Welcome to the Facebook."
-        }
-      ];
-  });
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-  if (posts.length > 0) {
-    localStorage.setItem("posts", JSON.stringify(posts));
-  }
-}, [posts]);
+    axios.get("http://localhost:5000/api/v1/posts")
+      .then((response) => {
+        setPosts(response.data)
+      })
+      .catch((error) => {
+        console.log(error)
+      });
+  }, []);
 
-  const handleCreatePost = (postData) => {
-    const newPost = {
-      id: Date.now(),
-      author: user.name,
-      time: "just now",
-      content: postData.content
-    };
 
-    setPosts(prev => [newPost, ...prev]);
+  const handleCreatePost = async (content) => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/v1/posts", 
+        {
+        id: user.id,
+        author: user.name,
+        content ,
+        time: "just now" 
+        }
+      );
+      setPosts(prev => [res.data, ...prev]);
+    } catch (error) {
+      console.log("Failed to create post", error);
+    }
   };
 
   return (
