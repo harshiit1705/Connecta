@@ -5,7 +5,7 @@ import CreatePost from "../components/post/CreatePost.jsx";
 import PostFeed from "../components/post/Postfeed.jsx";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
-
+import api from "../api/axios.js";
 
 
 function Home() {
@@ -13,7 +13,7 @@ function Home() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/v1/posts")
+    api.get("/api/v1/posts")
       .then((response) => {
         setPosts(response.data)
       })
@@ -25,12 +25,7 @@ function Home() {
 
   const handleCreatePost = async (content) => {
     try {
-      const res = await axios.post("http://localhost:5000/api/v1/posts", 
-        {
-        author: user.name,
-        content 
-        }
-      );
+      const res = await api.post("/api/v1/posts", { content });
       setPosts(prev => [res.data, ...prev]);
     } catch (error) {
       console.log("Failed to create post", error);
