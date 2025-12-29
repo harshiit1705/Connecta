@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import Post from "./models/Post.model.js";
 import Comment from "./models/Comment.model.js";
+import authRoutes from "./routes/auth.routes.js";
 
 dotenv.config();
 connectDB();
@@ -14,6 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("api/v1/auth", authRoutes);
 
 app.get("/api/v1/posts", async(req, res) => {
   try {
