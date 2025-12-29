@@ -2,43 +2,39 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import connectDB from "./config/db.js";
+import Post from "./models/Post.js";
 
 dotenv.config();
+connectDB();
 
 const app = express();
-
-const posts = [
-  {
-    id: "p_89012",
-    author: "Harshit Sharma",
-    content: "Just finished building my first full-stack project.",
-    time: "Just now"
-  },
-  {
-    id: "p_89013",
-    author: "Aman Verma",
-    content: "Morning workout done.",
-    time: "2h"
-  }
-];
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/api/v1/posts", (req, res) => {
-  res.json(posts);
+app.get("/api/v1/posts", async(req, res) => {
+  try {
+    const posts = await Post.find().sort({ createdAt: -1});
+    res.json(posts);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch posts"});
+  }
 });
-app.post("/api/v1/posts", (req, res) => {
-  const { author, content, time } = req.body;
-  const newPost = {
-    id : `p_${Date.now()}`, 
-    author, 
-    content, 
-    time 
-  };
-  res.status(201).json(newPost);
-  posts.unshift(newPost);
+
+app.post("/api/v1/posts", async(req, res) => {
+  try {
+    const { author, content } = req.body;
+  
+    const newPost = await Post.create({
+      author,
+      content
+    });
+    res.status(201).json(newPost);
+  } catch (error) {
+    res.status(500).json({ message: "Post creation failed" });
+  }
 });
 
 // app.get("/", (req, res) => {

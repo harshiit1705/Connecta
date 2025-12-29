@@ -5,7 +5,7 @@ const PostFeed = ({ posts }) => {
   return (
     <section>
       {posts.map((post) => {
-        return <PostCard key={post.id} post={post} />
+        return <PostCard key={ post._id } post={post} />
 })}
     </section>
   );
