@@ -4,8 +4,13 @@ import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const { user, logout, isLoggedIn } = useContext(AuthContext);
+  const { user, logout, isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  }
 
   return (
     <nav className="navbar">
@@ -13,7 +18,7 @@ const Navbar = () => {
         <h2 className="logo">Facebook</h2>
       </div>
 
-      {isLoggedIn ?
+      {isAuthenticated ?
         (
           <>
           <div className="navbar-center">
@@ -28,7 +33,7 @@ const Navbar = () => {
           <div className="profile">
             <span className="avatar">{user?.name?.[0]}</span>
             <span className="username">{user?.name}</span>
-            <button className="nav-btn" onClick={logout}>
+            <button className="nav-btn" onClick={handleLogout}>
               Logout
             </button>
           </div>

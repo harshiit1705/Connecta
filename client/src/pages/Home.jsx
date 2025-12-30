@@ -3,13 +3,10 @@ import MainLayout from "../layouts/MainLayout.jsx";
 import Sidebar from "../components/common/Sidebar.jsx";
 import CreatePost from "../components/post/CreatePost.jsx";
 import PostFeed from "../components/post/Postfeed.jsx";
-import { AuthContext } from "../context/AuthContext";
-import axios from "axios";
 import api from "../api/axios.js";
 
 
 function Home() {
-  const { user } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {

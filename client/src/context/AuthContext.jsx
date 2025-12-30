@@ -5,30 +5,39 @@ export const AuthContext = createContext(null);
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn]  = useState(true);
+
+  const isAuthenticated = !!localStorage.getItem("token");
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    if (storedUser && storedUser !== "undefined" && isAuthenticated) {
       setUser(JSON.parse(storedUser));
+    }else{
+      setUser(null);
     }
+    
     setAuthLoading(false);
-  }, []);
+  }, [isAuthenticated]);
 
-  const login = (userData) => {
-    setUser(userData);
-    setIsLoggedIn(true);
-    localStorage.setItem("user", JSON.stringify(userData));
+  // const login = ({ user, token}) => {
+  //   localStorage.setItem("token", token);
+  //   localStorage.setItem("user", JSON.stringify(user));
+  //   setUser(user);
+  // };
+
+  const login = (data) => {
+    localStorage.setItem("token", data.token);
+    setUser(data.user);
   };
 
   const logout = () => {
-    setIsLoggedIn(false);
-    setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, authLoading, isLoggedIn }}>
+    <AuthContext.Provider value={{ user, login, logout, authLoading, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

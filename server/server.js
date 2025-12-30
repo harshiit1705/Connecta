@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 import Post from "./models/Post.model.js";
 import Comment from "./models/Comment.model.js";
 import authRoutes from "./routes/auth.routes.js";
+import authMiddleware from "./middleware/auth.middleware.js";
 
 dotenv.config();
 connectDB();
@@ -15,7 +16,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("api/v1/auth", authRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 app.get("/api/v1/posts", async(req, res) => {
   try {
@@ -28,17 +29,18 @@ app.get("/api/v1/posts", async(req, res) => {
   }
 });
 
-app.post("/api/v1/posts", async(req, res) => {
+app.post("/api/v1/posts", authMiddleware, async(req, res) => {
   try {
-    const { author, content } = req.body;
+    const { content } = req.body;
 
-    if(!author || !content){
-      return res.status(400).json({message: "Author and content are required "});
+    if(!content){
+      return res.status(400).json({message: "Content is required "});
     }
     const newPost = await Post.create({
-      author,
+      author: req.user._id,
       content
     });
+    
     res.status(201).json(newPost);
   } catch (error) {
     res.status(500).json({ message: "Post creation failed" });

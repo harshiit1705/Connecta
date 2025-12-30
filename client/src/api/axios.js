@@ -17,12 +17,29 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if(error.response?.status === 401){
-            localStorage.removeItem("token");
-            window.location.href = "/login";
-        }
-        return Promise.reject(error);
+  (response) => response,
+  (error) => {
+    if (
+      error.response?.status === 401 &&
+      !error.config.url.includes("/login")
+    ) {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
     }
+    return Promise.reject(error);
+  }
 );
+
+
+// api.interceptors.response.use(
+//     (response) => response,
+//     (error) => {
+//         if(error.response?.status === 401){
+//             localStorage.removeItem("token");
+//             window.location.href = "/login";
+//         }
+//         return Promise.reject(error);
+//     }
+// );
+
+export default api;
