@@ -47,16 +47,63 @@ app.post("/api/v1/posts", authMiddleware, async(req, res) => {
   }
 });
 
+app.patch("/api/v1/posts/:id", authMiddleware, async(req, res) => {
+  try {
+    const { content } = req.body;
+
+    const post = await Post.findById(req.params.id);
+
+    if(!post){
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    if(post.author.toString() !== req.user._id.toString()){
+      return res.status(400).json({ message: "user is not allowed to edit this post." });
+    }
+
+    post.content = content;
+
+    await post.save();
+
+    res.json(post);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update post!"})
+  }
+})
+
+app.delete("/api/v1/posts/:id", authMiddleware, async(req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if(!post){
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    if(post.author.toString() !== req.user._id.toString()){
+      return res.status(400).json({ message: "user is not allowed to delete this post." });
+    }
+
+    await post.deleteOne();
+
+    res.json({ message: "post deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete post!"})
+  }
+})
+
 app.post("/api/v1/posts/:id/like", async(req, res)=> {
   try {
-    const { userId } = req.body;
-  
-    await Post.findByIdAndUpdate( req.params.id, 
-      {$addToSet: { likes: userId } },
-      {new: true }
+    const post = await Post.findByIdAndUpdate(
+      req.params._id,
+      {$addToSet: {likes: req.user._id}},
+      {new: true}
     );
-  
-    res.json({ message: "Post likes" });
+
+    if(!post){
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.json(post);
   } catch (err) {
     res.status(500).json({ message: "Failed to like post" });
   }
@@ -64,13 +111,16 @@ app.post("/api/v1/posts/:id/like", async(req, res)=> {
 
 app.delete("/api/v1/posts/:id/like", async(req, res) => {
   try {
-    const { userId } = req.body;
-  
-    await Post.findByIdAndUpdate( req.params.id, 
-      { $pull: {likes: userId }}
+    const post = await Post.findByIdAndUpdate(
+      req.params.id,
+      {$pull: {likes: req.user._id }},
+      { new: true}
     );
-  
-    res.json({ message: "Post unliked"});
+
+    if(!post){
+      return res.status(404).json({ message: "Post not found"});
+    };
+    res.json(post);
   } catch (error) {
     res.status(500).json({ message: "Failed to unlike post"});
   }
@@ -107,6 +157,7 @@ app.get("/api/v1/posts/:id/comments", async(req, res) => {
     res.status(500).json({message: "Failed to fetch comments"});
   }
 })
+
 // app.get("/", (req, res) => {
 //   res.send("Backend is running");
 // });

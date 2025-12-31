@@ -9,8 +9,6 @@ const authMiddleware = async(req, res, next) => {
         if(!authHeader || !authHeader.startsWith("Bearer ")){
             return res.status(401).json({ message: "Not authorized" });
         }
-        
-        console.log("AUTH HEADER:", req.headers.authorization);
 
         const token = authHeader.split(" ")[1];
 

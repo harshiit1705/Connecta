@@ -1,13 +1,21 @@
 import React, { useEffect, useState } from "react";
 import "./CreatePost.css";
 
-const CreatePost = ({ onCreate }) => {
+const CreatePost = ({ onCreate, onUpdate, editingPost, cancelEdit }) => {
   const [content, setContent] = useState("");
-  const handleSubmit = () => {
-    if (!content.trim()) return;
+  
+  useEffect(() => {
+    if(editingPost){
+      setContent(editingPost.content);
+    }
+  }, [editingPost]);
 
+  const handleSubmit = () => {
+    if(editingPost){
+      onUpdate(editingPost._id, content)
+    } else{
     onCreate(content);
-    
+    }
     setContent("");
   };
 
@@ -24,7 +32,12 @@ const CreatePost = ({ onCreate }) => {
       </div>
 
       <div className="create-post-bottom">
-        <button onClick={handleSubmit}>Post</button>
+        <button onClick={handleSubmit}>
+          {editingPost ? "Update" : "Post"}
+        </button>
+        {editingPost && (
+          <button onClick={cancelEdit}>Cancel</button>
+        )}
       </div>
     </div>
   );
