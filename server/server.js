@@ -91,25 +91,27 @@ app.delete("/api/v1/posts/:id", authMiddleware, async(req, res) => {
   }
 })
 
-app.post("/api/v1/posts/:id/like", async(req, res)=> {
+app.post("/api/v1/posts/:id/like", authMiddleware, async(req, res)=> {
   try {
     const post = await Post.findByIdAndUpdate(
-      req.params._id,
+      req.params.id,
       {$addToSet: {likes: req.user._id}},
       {new: true}
     );
-
+    console.log("Post to like: ",post);
+    
     if(!post){
       return res.status(404).json({ message: "Post not found" });
     }
 
     res.json(post);
   } catch (err) {
+    console.log("error while liking post: ",err); 
     res.status(500).json({ message: "Failed to like post" });
   }
 });
 
-app.delete("/api/v1/posts/:id/like", async(req, res) => {
+app.delete("/api/v1/posts/:id/like", authMiddleware, async(req, res) => {
   try {
     const post = await Post.findByIdAndUpdate(
       req.params.id,
@@ -126,13 +128,13 @@ app.delete("/api/v1/posts/:id/like", async(req, res) => {
   }
 })
 
-app.post("/api/v1/posts/:id/comments", async(req, res) => {
+app.post("/api/v1/posts/:id/comments", authMiddleware, async(req, res) => {
   try {
-    const { author, content } = req.body;
+    const { content } = req.body;
   
     const comment = await Comment.create({
       post: req.params.id,
-      author,
+      author: req.user._id,
       content
     });
   
@@ -142,11 +144,12 @@ app.post("/api/v1/posts/:id/comments", async(req, res) => {
   
     res.status(200).json(comment);
   } catch (err) {
+    console.log("Failed to comment",err);
     res.status(500).json({ message: "Failed to add comment"});
   }
 });
 
-app.get("/api/v1/posts/:id/comments", async(req, res) => {
+app.get("/api/v1/posts/:id/comments", authMiddleware,async(req, res) => {
   try {
     const comments = await Comment.find({ post: req.params.id })
     .populate("author", "name avatar")
@@ -158,6 +161,29 @@ app.get("/api/v1/posts/:id/comments", async(req, res) => {
   }
 })
 
+app.delete("/api/v1/comments/:id", authMiddleware, async(req, res) =>{
+ try {
+   const comment = await Comment.findById(req.params.id);
+   if(!comment){
+     return res.status(400).json({message: "Comment not found!"});
+   }
+ 
+   if(comment.author.toString() !== req.user._id.toString()){
+     return res.status(403).json({ message: "Not Authorized" });
+   }
+ 
+   await Post.findByIdAndUpdate(comment.post, {
+     $inc: {commentsCount: -1}
+   });
+ 
+   await comment.deleteOne();
+ 
+   res.json({message: "Comment deleted succesfully"});
+ } catch (err) {
+  console.log("Delete comment error: ",err);
+  res.status(500).json({ message: "Failed to delete comment"})
+ }
+})
 // app.get("/", (req, res) => {
 //   res.send("Backend is running");
 // });

@@ -1,7 +1,7 @@
 import React, { useState} from "react";
 import PostCard from "../common/PostCard.jsx";
 
-const PostFeed = ({ posts, onEdit, onDelete }) => {
+const PostFeed = ({ posts, onEdit, onDelete, onLike }) => {
   return (
     <section>
       {posts.map((post) => {
@@ -10,6 +10,7 @@ const PostFeed = ({ posts, onEdit, onDelete }) => {
         post={post} 
         onDelete={onDelete}
         onEdit={onEdit}
+        onLike={onLike}
         />
 })}
     </section>

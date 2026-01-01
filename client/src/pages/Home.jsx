@@ -39,10 +39,18 @@ function Home() {
     }
   };
 
-  // const handleEditPost = (post) => {
-  //   setEditingPost(post);
-  // };
-
+  const handleLikes = async(postId, isLiked) => {
+    try {
+      const res = isLiked? 
+      await api.delete(`/api/v1/posts/${postId}/like`)
+       : await api.post(`/api/v1/posts/${postId}/like`);
+  
+       setPosts(prev => prev.map(p => (p._id === postId ? res.data : p)));
+    } catch (error) {
+      console.log("Failed to like post", error);
+      
+    }
+  }
   const handleUpdatePost = async(id, content) => {
     try {
       const res = await api.patch(`/api/v1/posts/${id}`, { content });
@@ -67,7 +75,8 @@ function Home() {
         <PostFeed 
         posts={posts}
         onEdit={setEditingPost}
-        onDelete={handleDeletePost} 
+        onDelete={handleDeletePost}
+        onLike={handleLikes} 
         />
       </section>
     </MainLayout>
