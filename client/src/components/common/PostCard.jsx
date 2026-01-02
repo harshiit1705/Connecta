@@ -2,9 +2,12 @@ import { useContext, useState } from "react";
 import "./PostCard.css";
 import { AuthContext } from "../../context/AuthContext.jsx";
 import api from "../../api/axios.js";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const PostCard = ({ post, onDelete, onEdit, onLike }) => {
+
+  const navigate = useNavigate();
+
   const { user } = useContext(AuthContext);
 
   const isOwner = post?.author?._id === user?._id;
@@ -43,7 +46,10 @@ const PostCard = ({ post, onDelete, onEdit, onLike }) => {
       <div className="post-header">
         <div className="post-avatar"></div>
         <div>
-          <h4 className="post-author">{post?.author?.name}</h4>
+          <h4 className="post-author" 
+          onClick={ () => navigate(`/profile/${post.author._id}`) } >
+            {post?.author?.name}
+            </h4>
           <span className="post-time">
             {new Date(post.createdAt).toLocaleString()}
           </span>
@@ -58,12 +64,10 @@ const PostCard = ({ post, onDelete, onEdit, onLike }) => {
         }
       </div>
 
-      {/* Content */}
       <div className="post-content">
         <p>{post?.content}</p>
       </div>
 
-      {/* Actions */}
       <div className="post-actions">
         <button onClick={() => onLike(post._id, isLiked)}>
           {isLiked ? "Unlike" : "Like"} {post.likes.length}

@@ -9,6 +9,11 @@ const Login = () => {
 
   const handleLogin = async() => {
    try {
+    // const res = await api.post("/api/v1/auth/login", {
+    //   name: "Erica Albrigth",
+    //   email: "erica@harvards.in",
+    //   password: "Bright437"
+    // });
     const res = await api.post("/api/v1/auth/login", {
       name: "Mark",
       email: "mark@harvard.edu",
