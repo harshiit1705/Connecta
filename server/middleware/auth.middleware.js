@@ -4,22 +4,20 @@ import User from "../models/User.model.js";
 const authMiddleware = async(req, res, next) => {
     try {
         
-        const authHeader = req.headers.authorization;
+        const accessToken = req.cookies.accessToken;
 
-        if(!authHeader || !authHeader.startsWith("Bearer ")){
-            return res.status(401).json({ message: "Not authorized" });
+        if(!accessToken){
+            return res.status(401).json({ message: "Not authenticated" });
         }
 
-        const token = authHeader.split(" ")[1];
+        const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        const user = await User.findById(decoded.userId);
+        const user = await User.findById(decoded.userId).select("-password");
 
         if(!user){
-            return res.status(401).json({ message: "User no longer exists" });
+            return res.status(401).json({ message: "User not found" });
         }
-
+        
         req.user = user;
         next();
     } catch (error) {

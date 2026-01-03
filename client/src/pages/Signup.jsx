@@ -1,40 +1,51 @@
-import React,{useState, useContext} from 'react'
+import React, { useState, useContext } from 'react'
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios.js";
 import { AuthContext } from "../context/AuthContext.jsx";
 
 function Signup() {
-    const navigate = useNavigate();
-    const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { setUser } = useContext(AuthContext);
+  const [loading, setloading] = useState(false);
 
-    const [form, setForm] = useState({
-        name: "",
-        email: "",
-        password: ""
-    });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
 
-    const handleChange = (e) => {
-        setForm({...form, [e.target.name] : e.target.value });
-    };
-    
-    const handleSignup = async() => {
-       try {
-        const res = await api.post("/api/v1/auth/signup", form);
-        login(res.data);
-        navigate("/");
-       } catch (error) {
-        console.log("Signup failed", error);
-       }
-    };
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSignup = async (event) => {
+    try {
+      event.preventDefault();
+      const res = await api.post("/api/v1/auth/signup", form);
+      setUser(res.data.user);
+      navigate("/");
+      setloading(true);
+    }
+    catch (error) {
+      console.log("Signup failed", error);
+    }
+    finally {
+      setloading(false);
+    }
+  };
 
   return (
-    <div style={{ padding: "50px"}}>
-        <h2>Signup</h2>
-        <input name="name" placeholder="Name" onChange={handleChange} />
-        <input name="email" placeholder="email" onChange={handleChange} />
-        <input name="password" type="password" placeholder="Password" onChange={handleChange} />
+    <div style={{ padding: "50px" }}>
+      <h2>Signup</h2>
+      <form onSubmit={handleSignup}>
+        <input name="name" placeholder="Name" value={form.name} onChange={handleChange} />
+      <input name="email" placeholder="email" value={form.email} onChange={handleChange} />
+      <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} />
 
-        <button onClick={handleSignup}>Signup</button>
+      <button type="submit" disabled={loading}>
+        {loading? "Signing up..." : "Signup"}
+      </button>
+      </form>
     </div>
   )
 }
