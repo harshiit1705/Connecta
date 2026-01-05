@@ -15,7 +15,7 @@
 .post-avatar {
   width: 40px;
   height: 40px;
-  background-image: url("/Mark2.jpeg"); 
+  background-image: url("/default_avatar.png"); 
   background-size: cover;   
   background-position: center;
   border-radius: 50%;
