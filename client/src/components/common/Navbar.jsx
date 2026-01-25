@@ -15,7 +15,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <h2 className="logo">Facebook</h2>
+        <h2 className="logo">Connecta</h2>
       </div>
 
       {isAuthenticated ?

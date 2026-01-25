@@ -6,6 +6,7 @@ import {getUserProfile,
     followUser, 
     unFollowUser
 } from "../controllers/user.controller.js";
+import uploadAvatar from "../middleware/uploadAvatar.js";
 
 const router = express.Router();
 

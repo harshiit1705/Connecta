@@ -12,7 +12,7 @@
   gap: 10px;
 }
 
-.post-avatar {
+/* .post-avatar {
   width: 40px;
   height: 40px;
   background-image: url("/default_avatar.png"); 
@@ -23,7 +23,16 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
+} */
+
+.post-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
 }
+
 
 .post-author {
   margin: 0;

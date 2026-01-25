@@ -18,6 +18,8 @@ const PostCard = ({ post, onDelete, onEdit, onLike }) => {
   const[showComments, setShowComments] = useState(false);
   const [texts, setTexts] = useState("");
 
+  console.log("post's data: ", post);
+
   const loadComments = async() => {
     const res = await api.get(`/api/v1/posts/${post._id}/comments`);
     setComments(res.data);
@@ -44,7 +46,9 @@ const PostCard = ({ post, onDelete, onEdit, onLike }) => {
     <div className="post-card">
       {/* Header */}
       <div className="post-header">
-        <div className="post-avatar"></div>
+        <img className="post-avatar" 
+        src={post.author.avatar?.url || "/default_avatar.png"} 
+        alt={post.author.name}/>
         <div>
           <h4 className="post-author" 
           onClick={ () => navigate(`/profile/${post.author._id}`) } >

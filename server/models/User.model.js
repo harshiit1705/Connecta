@@ -22,8 +22,8 @@ const userSchema = new mongoose.Schema({
     },
 
     avatar: {
-        type: String,
-        default: ""
+        url: String,
+        publicId: String
     },
     bio: {
         type: String,

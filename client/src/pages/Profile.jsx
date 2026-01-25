@@ -63,6 +63,21 @@ const Profile = () => {
         }
     }
 
+    const handleAvatarChange = async (e) => {
+        const formData = new FormData();
+        formData.append("avatar", e.target.files[0]);
+
+        const res = await api.put("/api/v1/auth/avatar", formData,
+            {
+                headers: { "Content-Type": "multipart/form-data" },
+            }
+        );
+        
+        setProfile(prev => ({
+            ...prev, avatar: res.data.avatar,
+        }));
+    }
+
     useEffect(() => {
         loadProfile();
         loadPosts();
@@ -77,39 +92,62 @@ const Profile = () => {
     return (
         <div className="profile-page">
             <div className="profile-header">
-                <img
-                    src={profile.avatar || "default-avatar.png"}
-                    alt="avatar"
-                    className="profile-avatar" />
+                <div className="profile-header-left">
+                    <div className="avatar-wrapper">
+                        <img
+                            src={profile.avatar?.url || "/default_avatar.png"}
+                            alt="Profile Avatar"
+                            className="avatar-edit-btn"
+                        />
+                        {isOwnProfile && (
+                            <>
+                                <label htmlFor="fileUpload"
+                                    className="avatar-edit-btn">
+                                    +
+                                </label>
+                                <input
+                                    type="file"
+                                    id="fileUpload"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleAvatarChange}
+                                />
+                            </>
+                        )}
 
-                <h2>{profile.name}</h2>
-                <p>{profile.bio}</p>
-
-                <div>
-                    <span>{profile.followers.length}Followers</span>
-                    <span>{profile.following.length}Following</span>
+                    </div>
                 </div>
 
-                <div className="profile-action">
-                    {isOwnProfile ? (
-                        <button>Edit Profile</button>
+                <div className="profile-header-right">
+                    <h2>{profile.name}</h2>
+                    <p className="bio">{profile.bio}</p>
+                    </div>
+
+                    <div className="follow-stats">
+                        <span>{profile.followers.length} Followers</span>
+                        <span>{profile.following.length} Following</span>
+                    </div>
+
+                    <div className="profile-action">
+                        {isOwnProfile ? (
+                            <button>Edit Profile</button>
+                        ) : (
+                            <button onClick={handleFollow}>{isFollowing ? "Unfollow" : "Follow"}</button>
+                        )}
+                    </div>
+                </div>
+
+                <div>
+                    {posts.length === 0 ? (
+                        <p>No posts yet</p>
                     ) : (
-                        <button onClick={handleFollow}>{isFollowing ? "Unfollow" : "Follow"}</button>
+                        posts.map(post => (
+                            <PostCard key={post._id} post={post} />
+                        ))
                     )}
                 </div>
             </div>
-
-            <div>
-                {posts.length === 0 ? (
-                    <p>No posts yet</p>
-                ) : (
-                    posts.map(post => (
-                        <PostCard key={post._id} post={post} />
-                    ))
-                )}
-            </div>
-        </div>
-    )
+            )
 }
 
-export default Profile;
+            export default Profile;

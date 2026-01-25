@@ -30,6 +30,84 @@
   font-size: 14px;
 }
 
+.profile-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header layout */
+.profile-header {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 24px;
+}
+
+/* Avatar */
+.avatar-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.avatar-wrapper img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #3b82f6;
+}
+
+/* Edit button */
+.avatar-edit-btn {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background: #3b82f6;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Right side */
+.profile-header-right h2 {
+  margin: 0;
+}
+
+.bio {
+  margin: 6px 0;
+  color: #555;
+}
+
+.follow-stats {
+  display: flex;
+  gap: 16px;
+  margin: 8px 0;
+}
+
+.profile-action button {
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: #3b82f6;
+  color: white;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
 /* ===== STATS ===== */
 .profile-stats {
   display: flex;
@@ -57,3 +135,4 @@
   flex-direction: column;
   gap: 16px;
 }
+

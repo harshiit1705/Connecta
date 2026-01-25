@@ -4,6 +4,7 @@ import User from "../models/User.model.js";
 import jwt from "jsonwebtoken";
 import { generateTokens } from "../utils/generateTokens.js";
 import authMiddleware from "../middleware/auth.middleware.js";
+import uploadAvatar from "../middleware/uploadAvatar.js";
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ router.post("/signup", async (req, res) => {
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(409).json({ message: "User is already register" });
+            return res.status(409).json({ message: "User is already registered" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -138,5 +139,29 @@ router.get("/me", authMiddleware, (req, res) => {
         user: req.user
     });
 });
+
+router.put("/avatar", authMiddleware, uploadAvatar.single("avatar"),
+    async (req, res) => {
+        try {
+            if (!req.file) {
+                return res.status(400).json({ message: "No file uploaded" });
+            }
+
+            req.user.avatar = {
+                url: req.file.path,
+                publicId: req.file.filename,
+            };
+
+            await req.user.save();
+
+            res.json({
+                message: "Avatar updated",
+                avatar: req.user.avatar,
+            })
+        } catch (err) {
+            res.status(500).json({ message: "Avatar upload failed" });
+        }
+    }
+)
 
 export default router;
